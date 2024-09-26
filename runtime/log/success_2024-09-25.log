@@ -1,0 +1,8 @@
+Wed, 25 Sep 2024 18:52:27 CST - [127.0.0.1] "GET /user/info HTTP/1.1 200 0s "" "
+Wed, 25 Sep 2024 18:52:28 CST - [127.0.0.1] "GET /user/info HTTP/1.1 200 0s "" "
+捕获异常： runtime error: integer divide by zero
+Wed, 25 Sep 2024 18:53:24 CST - [127.0.0.1] "POST /user/list HTTP/1.1 200 1.0258ms "" "
+捕获异常： runtime error: integer divide by zero
+Wed, 25 Sep 2024 18:53:34 CST - [127.0.0.1] "POST /user/list HTTP/1.1 200 0s "" "
+Wed, 25 Sep 2024 18:53:55 CST - [127.0.0.1] "GET /user/list HTTP/1.1 404 0s "" "
+Wed, 25 Sep 2024 18:53:58 CST - [127.0.0.1] "GET /user/list HTTP/1.1 404 0s "" "
