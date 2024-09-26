@@ -50,8 +50,54 @@ func (u UserController) AddUser(c *gin.Context) {
 
 	id, err := models.AddUser(username)
 	if err != nil {
-		ReturnError(c, 400, err.Error()) // 返回具体错误信息
+		ReturnError(c, 400, "用户添加失败"+err.Error()) // 返回具体错误信息
 		return
 	}
 	ReturnSuccess(c, 0, "用户添加成功", id, 1)
+}
+
+// 更新用户名
+func (u UserController) UpdateUser(c *gin.Context) {
+	//获取用户信息
+	username := c.DefaultPostForm("username", "")
+	idStr := c.DefaultPostForm("id", "")
+	id, _ := strconv.Atoi(idStr)
+
+	//调用方法更新数据库中的用户名
+	models.UpdateUser(id, username)
+	ReturnSuccess(c, 0, "用户更新成功", true, 1)
+}
+
+// 删除用户
+func (u UserController) DeleteUser(c *gin.Context) {
+	//获取id
+	idStr := c.DefaultPostForm("id", "")
+	id, _ := strconv.Atoi(idStr)
+
+	//调用方法删除数据库中的用户
+	err := models.DeleteUser(id)
+	if err != nil {
+		ReturnError(c, 404, "用户删除失败"+err.Error())
+	}
+	ReturnSuccess(c, 0, "用户删除成功", true, 1)
+
+}
+
+//func (u UserController) GetAllUsers(c *gin.Context) {
+//	users, err := models.GetAllUsers()
+//	if err != nil {
+//		ReturnError(c, 404, "用户列表获取失败"+err.Error())
+//	}
+//	ReturnSuccess(c, 0, "用户列表获取成功成功", users, 1)
+//}
+
+func (u UserController) GetAllUsers(c *gin.Context) {
+	users, err := models.GetAllUsers()
+	if err != nil {
+		ReturnError(c, 404, "用户列表获取失败: "+err.Error())
+		return // 添加 return 结束函数的执行
+	}
+
+	// 处理成功的情况，避免重复的“成功”字样
+	ReturnSuccess(c, 0, "用户列表获取成功", users, 1)
 }

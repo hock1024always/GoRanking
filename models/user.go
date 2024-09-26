@@ -32,3 +32,30 @@ func AddUser(username string) (int, error) {
 	}
 	return user.Id, nil
 }
+
+func UpdateUser(id int, username string) {
+	dao.Db.Model(&User{}).Where("id = ?", id).Update("username", username)
+}
+
+// DeleteUser 根据用户ID(主键)删除用户
+func DeleteUser(id int) error {
+	err := dao.Db.Delete(&User{}, id).Error
+	return err
+}
+
+//func GetAllUsers() ([]User, error) {
+//	var users []User
+//	//没存够100号 所以拿这个数来返回整个列表
+//	err := dao.Db.Where("id < 100", 100).Find(&users).Error
+//	return users, err
+//}
+
+func GetAllUsers() ([]User, error) {
+	var users []User
+	//没存够100号 所以拿这个数来返回整个列表
+	err := dao.Db.Where("id < ?", 100).Find(&users).Error
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
