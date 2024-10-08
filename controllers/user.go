@@ -8,11 +8,11 @@ import (
 // 实现关于用户的功能
 type UserController struct{}
 
-//type UserApi struct {
-//	Username string `json:"username"`
-//	Password string `json:"password"`
-//	Userid   string `json:"userid"`
-//}
+type UserApi struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Userid   string `json:"userid"`
+}
 
 func (u UserController) Register(c *gin.Context) {
 	//接受用户名 密码以及确认密码
@@ -39,6 +39,7 @@ func (u UserController) Register(c *gin.Context) {
 	_, err := models.AddUser(username, EncryMd5(password))
 	if err != nil {
 		ReturnError(c, 4004, "保存用户失败")
+
 		return
 	}
 
