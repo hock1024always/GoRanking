@@ -13,6 +13,11 @@ type User struct {
 	UpdateTime int64  `json:"updatetime"`
 }
 
+type UserApi struct {
+	Username string `json:"username"`
+	Userid   int    `json:"userid"`
+}
+
 func (User) TableName() string {
 	return "user"
 }
@@ -25,8 +30,9 @@ func CheckUserExist(username string) (User, error) {
 }
 
 // 保存用户
-func AddUser(username, password string) (int, error) {
+func AddUser(username, password string) (UserApi, error) {
 	user := User{Username: username, Password: password, AddTime: time.Now().Unix(), UpdateTime: time.Now().Unix()}
 	err := dao.Db.Create(&user).Error
-	return user.Id, err
+	userapi := UserApi{Username: username, Userid: user.Id}
+	return userapi, err
 }

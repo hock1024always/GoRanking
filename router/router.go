@@ -1,8 +1,11 @@
 package router
 
 import (
+	"Ranking/config"
 	"Ranking/controllers"
 	"Ranking/pkg/logger"
+	"github.com/gin-contrib/sessions"
+	sessions_redis "github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,14 +14,19 @@ func Router() *gin.Engine {
 	//创建一个路由的实例
 	r := gin.Default()
 
-	//日志
+	//日志中间件
 	r.Use(gin.LoggerWithConfig(logger.LoggerToFile()))
 	r.Use(logger.Recover)
+	//sessions中间件
+	store, _ := sessions_redis.NewStore(10, "tcp", config.RedisAddress, "", []byte("secret"))
+	r.Use(sessions.Sessions("mysession", store))
 
 	user := r.Group("/user")
 	{
 		// 注册用户相关的路由
 		user.POST("/register", controllers.UserController{}.Register)
+		// 登录用户相关的路由
+		user.POST("/login", controllers.UserController{}.Login)
 	}
 	return r
 }
