@@ -28,5 +28,10 @@ func Router() *gin.Engine {
 		// 登录用户相关的路由
 		user.POST("/login", controllers.UserController{}.Login)
 	}
+
+	player := r.Group("/player")
+	{
+		player.POST("/list", controllers.PlayerController{}.GetPlayerList)
+	}
 	return r
 }

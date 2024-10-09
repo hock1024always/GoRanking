@@ -6,3 +6,6 @@ Tue, 08 Oct 2024 16:55:04 CST - [127.0.0.1] "POST /user/register HTTP/1.1 200 6.
 Tue, 08 Oct 2024 16:56:28 CST - [127.0.0.1] "POST /user/register HTTP/1.1 200 5.7316ms "" "
 Tue, 08 Oct 2024 17:17:50 CST - [127.0.0.1] "POST /user/login HTTP/1.1 200 3.668ms "" "
 Tue, 08 Oct 2024 17:23:51 CST - [127.0.0.1] "POST /user/login HTTP/1.1 200 1.0229ms "" "
+Tue, 08 Oct 2024 21:35:55 CST - [127.0.0.1] "POST /player/list HTTP/1.1 200 1.5071ms "" "
+Tue, 08 Oct 2024 21:45:40 CST - [127.0.0.1] "POST /player/list HTTP/1.1 200 965.1µs "" "
+Tue, 08 Oct 2024 21:47:26 CST - [127.0.0.1] "POST /player/list HTTP/1.1 200 1.1385ms "" "
