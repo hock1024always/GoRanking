@@ -15,7 +15,8 @@ func (p PlayerController) GetPlayerList(c *gin.Context) {
 
 	rs, err := models.GetPlayers(aid)
 	if err != nil {
-		ReturnError(c, 4021, err.Error())
+		//ReturnError(c, 4021, err.Error()) //调试阶段打印错误信息到json返回中
+		ReturnError(c, 4021, "获取参赛者列表失败")
 		return
 	}
 

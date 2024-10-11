@@ -36,3 +36,10 @@ func AddUser(username, password string) (UserApi, error) {
 	userapi := UserApi{Username: username, Userid: user.Id}
 	return userapi, err
 }
+
+// 通过Id来查找用户
+func CheckUserById(id int) (User, error) {
+	var user User
+	err := dao.Db.Where("id =?", id).First(&user).Error
+	return user, err
+}

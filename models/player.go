@@ -1,6 +1,9 @@
 package models
 
-import "Ranking/dao"
+import (
+	"Ranking/dao"
+	"gorm.io/gorm"
+)
 
 type Player struct {
 	Id          int    `json:"id"`
@@ -13,7 +16,7 @@ type Player struct {
 	// UpdateTime  int    `json:"updateTime"`
 }
 
-func (p *Player) TableName() string {
+func (Player) TableName() string {
 	return "player"
 }
 
@@ -21,4 +24,16 @@ func GetPlayers(aid int) ([]Player, error) {
 	var players []Player
 	err := dao.Db.Where("aid =?", aid).Find(&players).Error
 	return players, err
+}
+
+func GetPlayerById(id int) (Player, error) {
+	var player Player
+	err := dao.Db.Where("id =?", id).First(&player).Error
+	return player, err
+}
+
+// 通过投票来更新得分
+func UpdateScoreByVote(id int) {
+	var player Player
+	dao.Db.Model(&player).Where("id =?", id).UpdateColumn("score", gorm.Expr("score + ?", 1))
 }
