@@ -46,6 +46,9 @@ func Router() *gin.Engine {
 	{
 		controller.POST("/register", controllers.Controller{}.Register)
 		controller.POST("/activity", controllers.Controller{}.AddActivity)
+
+		controller.POST("/ranking", controllers.PlayerController{}.GetRanking) //获取排行榜 方便下一步去更改某个player的分数
+		controller.POST("/update_score", controllers.Controller{}.UpdatePlayersScore)
 	}
 	return r
 }

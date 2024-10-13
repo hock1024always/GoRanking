@@ -38,3 +38,24 @@ func UpdateScoreByVote(id int) {
 	var player Player
 	dao.Db.Model(&player).Where("id =?", id).UpdateColumn("score", gorm.Expr("score + ?", 1))
 }
+
+// 通过管理员修改来更新得分
+//
+//	func UpdateScoreByAdmin(username string, score int) {
+//		var player Player
+//		dao.Db.Model(&player).Where("username =?", username).UpdateColumn("score", score)
+//	}
+func UpdateScoreByAdmin(nickname string, score int) error {
+	var player Player
+	err := dao.Db.Model(&player).Where("nickname =?", nickname).UpdateColumn("score", score).Error
+	if err != nil {
+		return err // 处理错误
+	}
+	return nil // 返回 nil 表示成功
+}
+
+func CheckPlayerExistsByNickname(nickname string) (Player, error) {
+	var player Player
+	err := dao.Db.Where("nickname =?", nickname).First(&player).Error
+	return player, err
+}

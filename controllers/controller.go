@@ -4,6 +4,7 @@ import (
 	"Ranking/config"
 	"Ranking/models"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 type Controller struct{}
@@ -79,10 +80,51 @@ func (u Controller) AddActivity(c *gin.Context) {
 	//创建活动
 	activity2, err2 := models.AddActivity(activityName)
 	if err2 != nil {
-		ReturnError(c, 4215, err2.Error())
+		ReturnError(c, 4215, "保存活动失败")
 		return
 	}
 
 	ReturnSuccess(c, 0, "注册成功", activity2, 1)
+}
 
+func (u Controller) UpdatePlayersScore(c *gin.Context) {
+	//接受用户名 密码
+	username := c.DefaultPostForm("admin_name", "")
+	password := c.DefaultPostForm("password", "")
+
+	//获得用户名称
+	playerName := c.DefaultPostForm("player_name", "")
+	updateScoreStr := c.DefaultPostForm("update_score", "")
+	updateScore, _ := strconv.Atoi(updateScoreStr)
+
+	//验证 用户名或者密码为空 用户名不存在 密码错误
+	if username == "" || password == "" {
+		ReturnError(c, 4311, "管理员名或密码为空")
+		return
+	}
+	user1, err := models.CheckControllerExist(username)
+	if err != nil {
+		ReturnError(c, 4312, "管理员不存在")
+		//ReturnError(c, 4212, err.Error())
+		return
+	}
+	if user1.Password != password {
+		ReturnError(c, 4313, "密码错误")
+		return
+	}
+
+	//验证 参赛者是否存在
+	player, _ := models.CheckPlayerExistsByNickname(playerName)
+	if player.Id == 0 {
+		ReturnError(c, 4314, "该参赛者不存在")
+		return
+	}
+
+	//更新参赛者的得分
+	err3 := models.UpdateScoreByAdmin(playerName, updateScore)
+	if err3 != nil {
+		ReturnError(c, 4315, "更新失败")
+		return
+	}
+	ReturnSuccess(c, 0, "更新成功", player.Nickname+"更新之后的得分为:"+updateScoreStr, 1)
 }
