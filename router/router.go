@@ -40,5 +40,11 @@ func Router() *gin.Engine {
 	}
 
 	r.POST("/ranking", controllers.PlayerController{}.GetRanking)
+
+	//管理员
+	controller := r.Group("/admin")
+	{
+		controller.POST("/register", controllers.Controller{}.Register)
+	}
 	return r
 }
