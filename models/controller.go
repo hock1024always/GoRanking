@@ -10,15 +10,7 @@ type Controller struct {
 	Password       string `json:"password"`
 }
 
-type Activity struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-}
-
 // 添加 TableName 方法，指定表名
-func (Activity) TableName() string {
-	return "activity" // 指定表名为 activity
-}
 func (Controller) TableName() string {
 	return "controllers" // 指定表名为 controllers
 }
@@ -35,16 +27,4 @@ func AddController(controllername, password string) (Controller, error) {
 	controller := Controller{ControllerName: controllername, Password: password}
 	err := dao.Db.Create(&controller).Error
 	return controller, err
-}
-
-func CheckActivityExist(activityname string) (Activity, error) {
-	var activity Activity
-	err := dao.Db.Where("name =?", activityname).First(&activity).Error
-	return activity, err
-}
-
-func AddActivity(activityname string) (Activity, error) {
-	activity := Activity{Name: activityname}
-	err := dao.Db.Create(&activity).Error
-	return activity, err
 }

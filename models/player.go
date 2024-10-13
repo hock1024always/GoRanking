@@ -13,11 +13,18 @@ type Player struct {
 	Avatar      int    `json:"avatar"`      // 头像序号
 	Score       int    `json:"score"`       // 积分
 	Declaration string `json:"declaration"` // 将类型改为 string
+	Password    string `json:"password"`
 	// UpdateTime  int    `json:"updateTime"`
 }
 
 func (Player) TableName() string {
 	return "player"
+}
+
+func AddPlayer(nickname, password string) (Player, error) {
+	player := Player{Nickname: nickname, Password: password}
+	err := dao.Db.Create(&player).Error
+	return player, err
 }
 
 // 获取某种顺序排列的某一活动的玩家列表 DESC降序 ASC升序
@@ -40,11 +47,6 @@ func UpdateScoreByVote(id int) {
 }
 
 // 通过管理员修改来更新得分
-//
-//	func UpdateScoreByAdmin(username string, score int) {
-//		var player Player
-//		dao.Db.Model(&player).Where("username =?", username).UpdateColumn("score", score)
-//	}
 func UpdateScoreByAdmin(nickname string, score int) error {
 	var player Player
 	err := dao.Db.Model(&player).Where("nickname =?", nickname).UpdateColumn("score", score).Error

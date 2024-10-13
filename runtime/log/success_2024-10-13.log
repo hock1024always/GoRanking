@@ -29,3 +29,7 @@ Sun, 13 Oct 2024 15:52:40 CST - [127.0.0.1] "POST /admin/update_score HTTP/1.1 2
 Sun, 13 Oct 2024 15:53:36 CST - [127.0.0.1] "POST /admin/update_score HTTP/1.1 200 1.5452ms "" "
 Sun, 13 Oct 2024 15:54:07 CST - [127.0.0.1] "POST /admin/update_score HTTP/1.1 200 1.7082ms "" "
 Sun, 13 Oct 2024 15:55:28 CST - [127.0.0.1] "POST /admin/update_score HTTP/1.1 200 7.1299ms "" "
+Sun, 13 Oct 2024 17:26:46 CST - [127.0.0.1] "POST /admin/update_score HTTP/1.1 200 10.3082ms "" "
+Sun, 13 Oct 2024 17:27:14 CST - [127.0.0.1] "POST /player/register HTTP/1.1 200 0s "" "
+Sun, 13 Oct 2024 17:27:48 CST - [127.0.0.1] "POST /player/register HTTP/1.1 200 7.7136ms "" "
+Sun, 13 Oct 2024 23:42:17 CST - [127.0.0.1] "POST /player/add_activity HTTP/1.1 200 10.462ms "" "
