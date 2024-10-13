@@ -45,6 +45,7 @@ func Router() *gin.Engine {
 	controller := r.Group("/admin")
 	{
 		controller.POST("/register", controllers.Controller{}.Register)
+		controller.POST("/activity", controllers.Controller{}.AddActivity)
 	}
 	return r
 }
