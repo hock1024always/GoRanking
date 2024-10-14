@@ -43,3 +43,10 @@ func CheckUserById(id int) (User, error) {
 	err := dao.Db.Where("id =?", id).First(&user).Error
 	return user, err
 }
+
+// 删除通过用户名用户
+func DeleteUserByUsername(username string) error {
+	var user User
+	err := dao.Db.Where("username =?", username).Delete(&user).Error
+	return err
+}

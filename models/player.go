@@ -51,10 +51,7 @@ func UpdateScoreByVote(id int) error {
 func UpdateScoreByAdmin(nickname string, score int) error {
 	var player Player
 	err := dao.Db.Model(&player).Where("nickname =?", nickname).UpdateColumn("score", score).Error
-	if err != nil {
-		return err // 处理错误
-	}
-	return nil // 返回 nil 表示成功
+	return err
 }
 
 func CheckPlayerExistsByNickname(nickname string) (Player, error) {

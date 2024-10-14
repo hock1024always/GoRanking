@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"Ranking/config"
 	"Ranking/models"
 	"github.com/gin-gonic/gin"
 )
@@ -75,4 +76,39 @@ func (u UserController) Login(c *gin.Context) {
 		Username: user1.Username,
 	}
 	ReturnSuccess(c, 0, "登录成功", date, 1)
+}
+
+// 注销用户
+func (u UserController) UserDelete(c *gin.Context) {
+	//接受用户名 密码
+	username := c.DefaultPostForm("username", "")
+	password := c.DefaultPostForm("password", "")
+	sentence := c.DefaultPostForm("confirm_sentence", "")
+
+	//验证 用户名或者密码为空 用户名不存在 密码错误
+	if username == "" || password == "" {
+		ReturnError(c, 4011, "用户名或密码为空")
+		return
+	}
+	user1, err := models.CheckUserExist(username)
+	if err != nil {
+		ReturnError(c, 4012, "用户名不存在")
+		return
+	}
+	if user1.Password != password {
+		ReturnError(c, 4013, "密码错误")
+		return
+	}
+	if sentence != config.UserDeleteConfirmSentence {
+		ReturnError(c, 4015, "确认语句错误")
+		return
+	}
+	//删除用户
+	err2 := models.DeleteUserByUsername(username)
+	if err2 != nil {
+		ReturnError(c, 4014, "删除用户失败")
+		return
+	}
+	//返回删除信息
+	ReturnSuccess(c, 0, "删除成功", nil, 1)
 }
