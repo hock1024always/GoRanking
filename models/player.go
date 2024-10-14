@@ -61,3 +61,10 @@ func CheckPlayerExistsByNickname(nickname string) (Player, error) {
 	err := dao.Db.Where("nickname =?", nickname).First(&player).Error
 	return player, err
 }
+
+// 更改宣言
+func AddDeclaration(id int, declaration string) (Player, error) {
+	var player Player
+	err := dao.Db.Model(&player).Where("id =?", id).Update("declaration", declaration).Error
+	return player, err
+}

@@ -34,6 +34,8 @@ func Router() *gin.Engine {
 		player.POST("/list", controllers.PlayerController{}.GetPlayerList)
 		player.POST("/register", controllers.PlayerController{}.PlayerRegister)
 		player.POST("/add_activity", controllers.PlayerController{}.PlayerChooseActivity)
+		player.POST("/add_declaration", controllers.PlayerController{}.UpdateDeclaration)
+
 	}
 
 	vote := r.Group("/vote")

@@ -69,7 +69,7 @@ func (p PlayerController) PlayerRegister(c *gin.Context) {
 	ReturnSuccess(c, 0, "注册成功", player, 1)
 }
 
-// 参赛者选择活动
+// 参赛者选择活动(每个参赛者只能选择一个)
 func (p PlayerController) PlayerChooseActivity(c *gin.Context) {
 	//接受用户名 密码
 	nickname := c.DefaultPostForm("nickname", "")
@@ -82,7 +82,7 @@ func (p PlayerController) PlayerChooseActivity(c *gin.Context) {
 	}
 	user1, err := models.CheckPlayerExistsByNickname(nickname)
 	if err != nil {
-		ReturnError(c, 41222, "参赛者不存在")
+		ReturnError(c, 4122, "参赛者不存在")
 		return
 	}
 	if user1.Password != password {
@@ -107,4 +107,42 @@ func (p PlayerController) PlayerChooseActivity(c *gin.Context) {
 
 }
 
-//参赛者设置宣言
+// 参赛者设置宣言
+func (p PlayerController) UpdateDeclaration(c *gin.Context) {
+	//接受用户名 密码
+	nickname := c.DefaultPostForm("nickname", "")
+	password := c.DefaultPostForm("password", "")
+
+	//验证 用户名或者密码为空 用户名不存在 密码错误
+	if nickname == "" || password == "" {
+		ReturnError(c, 4131, "用户名或密码为空")
+		return
+	}
+	user1, err := models.CheckPlayerExistsByNickname(nickname)
+	if err != nil {
+		ReturnError(c, 4132, "参赛者不存在")
+		return
+	}
+	if user1.Password != password {
+		ReturnError(c, 4133, "密码错误")
+		return
+	}
+
+	//接受活动名称 要验证宣言字符串是否为空
+	declaration := c.DefaultPostForm("declaration", "0")
+	if declaration == "" {
+		ReturnError(c, 4136, "宣言不能为空")
+		return
+	}
+	//设置宣言
+	player, err2 := models.AddDeclaration(user1.Id, declaration)
+	if err2 != nil {
+		ReturnError(c, 4135, "宣言更改失败")
+		return
+	}
+	ReturnSuccess(c, 0, "宣言更改成功", "宣言更改为："+player.Declaration, 1)
+}
+
+//参赛者设置头像
+
+//参赛者修改密码
