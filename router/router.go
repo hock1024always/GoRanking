@@ -37,10 +37,13 @@ func Router() *gin.Engine {
 		player.POST("/register", controllers.PlayerController{}.PlayerRegister)
 		player.POST("/add_activity", controllers.PlayerController{}.PlayerChooseActivity)
 		player.POST("/add_declaration", controllers.PlayerController{}.UpdateDeclaration)
-
+		//GET
+		player.GET("/get_activitys", controllers.ActivityController{}.GetActivityListForPlayer)
 	}
 
 	r.POST("/ranking", controllers.PlayerController{}.GetRanking)
+	//GET
+	r.GET("/activitys", controllers.ActivityController{}.GetActivityList)
 
 	//管理员
 	controller := r.Group("/admin")

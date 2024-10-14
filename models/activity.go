@@ -37,3 +37,17 @@ func AddPlayerToActivityActivity(playerId int, activityId int) error {
 	err := dao.Db.Model(&player).Where("id =?", playerId).UpdateColumn("aid", activityId).Error
 	return err
 }
+
+// 返回所有的活动
+func GetAllActivity(sort string) ([]Activity, error) {
+	var activity []Activity
+	err := dao.Db.Order(sort).Find(&activity).Error
+	return activity, err
+}
+
+// 返回所有可以参加的活动
+func GetAllActivityAvailable(sort string) ([]Activity, error) {
+	var activity []Activity
+	err := dao.Db.Where("state =?", 1).Order(sort).Find(&activity).Error
+	return activity, err
+}
