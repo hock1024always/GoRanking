@@ -8,8 +8,8 @@ import (
 type Player struct {
 	Id          int    `json:"id"`
 	Nickname    string `json:"nickname"`
-	Aid         int    `json:"aid"`         // 活动名称
-	Ref         int    `json:"ref"`         // 活动序号
+	Aid         int    `json:"aid"`         // 活动序号
+	Ref         int    `json:"ref"`         // 注销号码
 	Avatar      int    `json:"avatar"`      // 头像序号
 	Score       int    `json:"score"`       // 积分
 	Declaration string `json:"declaration"` // 将类型改为 string
@@ -41,9 +41,10 @@ func GetPlayerById(id int) (Player, error) {
 }
 
 // 通过投票来更新得分
-func UpdateScoreByVote(id int) {
+func UpdateScoreByVote(id int) error {
 	var player Player
-	dao.Db.Model(&player).Where("id =?", id).UpdateColumn("score", gorm.Expr("score + ?", 1))
+	err := dao.Db.Model(&player).Where("id =?", id).UpdateColumn("score", gorm.Expr("score + ?", 1)).Error
+	return err
 }
 
 // 通过管理员修改来更新得分

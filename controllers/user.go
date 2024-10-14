@@ -34,7 +34,7 @@ func (u UserController) Register(c *gin.Context) {
 	}
 
 	//创建用户
-	userapi, err2 := models.AddUser(username, EncryMd5(password))
+	userapi, err2 := models.AddUser(username, password)
 	if err2 != nil {
 		ReturnError(c, 4004, "保存用户失败")
 		return
@@ -59,7 +59,7 @@ func (u UserController) Login(c *gin.Context) {
 		ReturnError(c, 4012, "用户名不存在")
 		return
 	}
-	if user1.Password != EncryMd5(password) {
+	if user1.Password != password {
 		ReturnError(c, 4013, "密码错误")
 		return
 	}

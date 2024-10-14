@@ -27,6 +27,8 @@ func Router() *gin.Engine {
 		user.POST("/register", controllers.UserController{}.Register)
 		// 登录用户相关的路由
 		user.POST("/login", controllers.UserController{}.Login)
+		//实现投票功能的路由
+		user.POST("/vote", controllers.VoteController{}.AddVote)
 	}
 
 	player := r.Group("/player")
@@ -36,11 +38,6 @@ func Router() *gin.Engine {
 		player.POST("/add_activity", controllers.PlayerController{}.PlayerChooseActivity)
 		player.POST("/add_declaration", controllers.PlayerController{}.UpdateDeclaration)
 
-	}
-
-	vote := r.Group("/vote")
-	{
-		vote.POST("/add", controllers.VoteController{}.AddVote)
 	}
 
 	r.POST("/ranking", controllers.PlayerController{}.GetRanking)

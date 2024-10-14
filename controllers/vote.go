@@ -10,37 +10,69 @@ type VoteController struct{}
 
 func (v VoteController) AddVote(c *gin.Context) {
 	//获取数据
-	userIdStr := c.DefaultPostForm("user_id", "0")
-	playerIdStr := c.DefaultPostForm("player_id", "0")
-	userId, _ := strconv.Atoi(userIdStr)
-	playerId, _ := strconv.Atoi(playerIdStr)
+	username := c.DefaultPostForm("username", "")
+	password := c.DefaultPostForm("password", "")
+	playerIdStr := c.DefaultPostForm("player_id", "0") //这是对最终要转化成int的字符串的数据进行的防空操作
+	activityIdStr := c.DefaultPostForm("activity_id", "0")
 
+	playerId, _ := strconv.Atoi(playerIdStr)
+	activityId, _ := strconv.Atoi(activityIdStr)
 	//检查数输入
-	if userId == 0 || playerId == 0 {
+	if username == "" || playerId == 0 || activityId == 0 {
 		ReturnError(c, 4031, "输入参数为空，请重新输入")
+		return
 	}
-	user, _ := models.CheckUserById(userId)
+	//检查用户是否存在以及返回密码是否和数据库中的密码一致
+	user, _ := models.CheckUserExist(username)
 	if user.Id == 0 {
 		ReturnError(c, 4032, "用户不存在")
+		return
 	}
-	player, _ := models.GetPlayerById(playerId)
-	if player.Id == 0 {
-		ReturnError(c, 4033, "参赛者不存在")
-	}
-
-	//检查是否已经vote了 返回值重复投票
-	vote, _ := models.GetVoteInfo(userId, playerId)
-	if vote.Id != 0 { //已经投过票了
-		ReturnError(c, 4034, "已经投票过了")
-	}
-
-	//添加vote
-	rs, err := models.AddVote(userId, playerId)
-	if err == nil {
-		models.UpdateScoreByVote(playerId)
-		ReturnSuccess(c, 0, "投票成功", rs, 1)
+	if user.Password != password {
+		ReturnError(c, 4033, "密码错误")
 		return
 	}
 
-	ReturnError(c, 4035, err.Error())
+	//判断作品是否存在 以及作品是否存在于该活动中
+	player, _ := models.GetPlayerById(playerId)
+	if player.Id == 0 {
+		ReturnError(c, 4034, "参赛者不存在")
+		return
+	}
+	if player.Aid != activityId {
+		ReturnError(c, 4035, "参赛者选择的不是这个活动")
+		return
+	}
+
+	//判断活动是否存在 以及是否在进行中
+	activity, _ := models.GetActivityById(activityId)
+	if activity.Id == 0 {
+		ReturnError(c, 4036, "活动不存在")
+		return
+	}
+	if activity.State != 1 {
+		ReturnError(c, 4037, "活动不在投票时间")
+		return
+	}
+
+	//检查是否已经vote了
+	vote, _ := models.GetVoteInfo(user.Id, playerId, activityId)
+	if vote.Id != 0 { //已经投过票了
+		ReturnError(c, 4038, "已经投票过了")
+		return
+	}
+
+	//添加vote
+	rs, err := models.AddVote(user.Id, playerId, activityId)
+	if err != nil {
+		ReturnError(c, 4039, "投票失败")
+		return
+	}
+	err2 := models.UpdateScoreByVote(playerId)
+	if err2 != nil {
+		ReturnError(c, 40310, "更新分数失败")
+		return
+	}
+	ReturnSuccess(c, 0, "投票成功", rs, 1)
+
 }

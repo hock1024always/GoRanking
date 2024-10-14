@@ -3,8 +3,9 @@ package models
 import "Ranking/dao"
 
 type Activity struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
+	Id    int    `json:"id"`
+	Name  string `json:"name"`
+	State int    `json:"state"` //标识状态 1为开 0为关闭
 }
 
 func (Activity) TableName() string {
@@ -18,16 +19,16 @@ func CheckActivityExist(activityname string) (Activity, error) {
 }
 
 func AddActivity(activityname string) (Activity, error) {
-	activity := Activity{Name: activityname}
+	activity := Activity{Name: activityname, State: 1}
 	err := dao.Db.Create(&activity).Error
 	return activity, err
 }
 
-// 通过活动名获取活动id
-func GetActivityIdByName(activityname string) (int, error) {
+// 通过id获取活动
+func GetActivityById(id int) (Activity, error) {
 	var activity Activity
-	err := dao.Db.Where("name =?", activityname).First(&activity).Error
-	return activity.Id, err
+	err := dao.Db.Where("id=?", id).First(&activity).Error
+	return activity, err
 }
 
 // 将参赛者活动字段加入到activity表中
