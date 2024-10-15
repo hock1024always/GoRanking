@@ -31,7 +31,7 @@ func GetActivityById(id int) (Activity, error) {
 	return activity, err
 }
 
-// 将参赛者活动字段加入到activity表中
+// 将activityId字段加入到player表中
 func AddPlayerToActivityActivity(playerId int, activityId int) error {
 	var player Player
 	err := dao.Db.Model(&player).Where("id =?", playerId).UpdateColumn("aid", activityId).Error

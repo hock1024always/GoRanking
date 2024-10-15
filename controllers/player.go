@@ -74,6 +74,8 @@ func (p PlayerController) PlayerChooseActivity(c *gin.Context) {
 	//接受用户名 密码
 	nickname := c.DefaultPostForm("nickname", "")
 	password := c.DefaultPostForm("password", "")
+	activityIdStr := c.DefaultPostForm("activity_id", "0")
+	activityId, _ := strconv.Atoi(activityIdStr)
 
 	//验证 用户名或者密码为空 用户名不存在 密码错误
 	if nickname == "" || password == "" {
@@ -89,19 +91,23 @@ func (p PlayerController) PlayerChooseActivity(c *gin.Context) {
 		ReturnError(c, 4123, "密码错误")
 		return
 	}
+	if user1.Aid != 0 {
+		ReturnError(c, 4124, "该参赛者正在参加活动"+activityIdStr)
+		return
+	}
 
-	//接受活动名称
-	activityName := c.DefaultPostForm("activity_name", "0")
-
-	//验证活动是否存在
-	activity, err := models.CheckActivityExist(activityName)
+	//验证活动是否存在 检验参赛者是否正在参与某项活动
+	activity, err := models.GetActivityById(activityId)
 	if err != nil {
 		ReturnError(c, 4124, "活动不存在")
+		return
 	}
+
 	//参加活动
 	err = models.AddPlayerToActivityActivity(user1.Id, activity.Id)
 	if err != nil {
 		ReturnError(c, 4125, "参加活动失败")
+		return
 	}
 	ReturnSuccess(c, 0, "参加活动成功", nil, 1)
 
@@ -143,6 +149,7 @@ func (p PlayerController) UpdateDeclaration(c *gin.Context) {
 	ReturnSuccess(c, 0, "宣言更改成功", "宣言更改为："+player.Declaration, 1)
 }
 
-//参赛者设置头像
+//参赛者参与活动
 
-//参赛者修改密码
+//参赛者取消参与某项活动
+//参与者注销账户

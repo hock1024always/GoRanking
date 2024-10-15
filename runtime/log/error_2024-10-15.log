@@ -1,0 +1,3 @@
+{"level":"error","msg":"[]","mysql connect error":"dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.","time":"2024-10-15 16:15:26"}
+Tue, 15 Oct 2024 16:16:19 CST - [127.0.0.1] "POST /player/add_activity HTTP/1.1 200 505.8µs "" "
+Tue, 15 Oct 2024 16:16:40 CST - [127.0.0.1] "POST /player/add_activity HTTP/1.1 200 0s "" "
