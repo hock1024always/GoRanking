@@ -29,6 +29,8 @@ func Router() *gin.Engine {
 		user.POST("/login", controllers.UserController{}.Login)
 		//实现投票功能的路由
 		user.POST("/vote", controllers.VoteController{}.AddVote)
+		//删除投票功能的路由
+		user.POST("/delete_vote", controllers.VoteController{}.DeleteVote)
 		//实现删除用户的路由
 		user.POST("/delete", controllers.UserController{}.UserDelete)
 	}

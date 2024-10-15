@@ -40,10 +40,17 @@ func GetPlayerById(id int) (Player, error) {
 	return player, err
 }
 
-// 通过投票来更新得分
+// 通过投票来更新得分 加分
 func UpdateScoreByVote(id int) error {
 	var player Player
 	err := dao.Db.Model(&player).Where("id =?", id).UpdateColumn("score", gorm.Expr("score + ?", 1)).Error
+	return err
+}
+
+// 通过活动来更新得分 减分
+func UpdateScoreByActivity(playerId int) error {
+	var player Player
+	err := dao.Db.Model(&player).Where("id =?", playerId).UpdateColumn("score", gorm.Expr("score - ?", 1)).Error
 	return err
 }
 

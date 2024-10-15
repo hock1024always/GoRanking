@@ -35,3 +35,9 @@ func AddVote(userId int, playerId int, activityId int) (int, error) {
 	err := dao.Db.Create(&vote).Error
 	return vote.Id, err
 }
+
+func DeleteVote(userId int, playerId int, activityId int) error {
+	var vote Vote
+	err := dao.Db.Where("user_id =? AND player_id =? AND activity_id =?", userId, playerId, activityId).Delete(&vote).Error
+	return err
+}
