@@ -112,3 +112,69 @@ func (u UserController) UserDelete(c *gin.Context) {
 	//返回删除信息
 	ReturnSuccess(c, 0, "删除成功", nil, 1)
 }
+
+func (u UserController) GetVoteList(c *gin.Context) {
+	//接受用户名 密码
+	username := c.DefaultPostForm("username", "")
+	password := c.DefaultPostForm("password", "")
+
+	//验证 用户名或者密码为空 用户名不存在 密码错误
+	if username == "" || password == "" {
+		ReturnError(c, 4011, "用户名或密码为空")
+		return
+	}
+	user1, err := models.CheckUserExist(username)
+	if err != nil {
+		ReturnError(c, 4012, "用户名不存在")
+		return
+	}
+	if user1.Password != password {
+		ReturnError(c, 4013, "密码错误")
+		return
+	}
+
+	//获取投票列表
+	voteList, err2 := models.GetVoteList(user1.Id, "id desc")
+	if err2 != nil {
+		ReturnError(c, 4014, "获取投票列表失败")
+		return
+	}
+	ReturnSuccess(c, 0, "获取投票列表成功", voteList, 1)
+}
+
+// 修改用户密码
+func (u UserController) ModifyPassword(c *gin.Context) {
+	//接受用户名 密码
+	username := c.DefaultPostForm("username", "")
+	password := c.DefaultPostForm("password", "")
+	newPassword := c.DefaultPostForm("new_password", "")
+	confirmNewPassword := c.DefaultPostForm("confirm_new_password", "")
+
+	//验证 用户名或者密码为空 用户名不存在 密码错误
+	if username == "" || password == "" {
+		ReturnError(c, 4011, "用户名或密码为空")
+		return
+	}
+	user1, err := models.CheckUserExist(username)
+	if err != nil {
+		ReturnError(c, 4012, "用户名不存在")
+		return
+	}
+	if user1.Password != password {
+		ReturnError(c, 4013, "密码错误")
+		return
+	}
+	if newPassword != confirmNewPassword {
+		ReturnError(c, 4015, "新密码与确认新密码不一致")
+		return
+	}
+
+	//修改密码
+	updatePassword, err2 := models.UpdateUserPassword(username, newPassword)
+	if err2 != nil {
+		ReturnError(c, 4014, "修改密码失败")
+		return
+	}
+	//返回修改信息
+	ReturnSuccess(c, 0, "修改密码成功", "新密码是:"+updatePassword, 1)
+}

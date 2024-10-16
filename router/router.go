@@ -34,9 +34,9 @@ func Router() *gin.Engine {
 		//实现删除用户的路由 username password confirm_sentence
 		user.POST("/delete", controllers.UserController{}.UserDelete)
 		// 实现用户获取自己的投票记录 username password
-		//user.POST("/get_vote_list", controllers.VoteController{}.GetVoteList)
-		//实现用户修改密码 username password new_password confirm_password
-		//user.POST("/modify_password", controllers.UserController{}.ModifyPassword)
+		user.POST("/get_vote_list", controllers.UserController{}.GetVoteList)
+		//实现用户修改密码 username password new_password confirm_new_password
+		user.POST("/modify_password", controllers.UserController{}.ModifyPassword)
 	}
 
 	player := r.Group("/player")

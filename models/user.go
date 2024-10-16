@@ -50,3 +50,17 @@ func DeleteUserByUsername(username string) error {
 	err := dao.Db.Where("username =?", username).Delete(&user).Error
 	return err
 }
+
+// 获取投票列表
+func GetVoteList(userId int, sort string) ([]Vote, error) {
+	var votes []Vote
+	err := dao.Db.Where("user_id =?", userId).Order(sort).Find(&votes).Error
+	return votes, err
+}
+
+// 更新密码
+func UpdateUserPassword(username string, password string) (string, error) {
+	var user User
+	err := dao.Db.Model(&user).Where("username =?", username).UpdateColumn("password", password).Error
+	return password, err
+}
