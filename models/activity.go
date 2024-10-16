@@ -18,6 +18,13 @@ func CheckActivityExist(activityname string) (Activity, error) {
 	return activity, err
 }
 
+// 通过id查看活动是否存在
+func CheckActivityExistById(activityId int) (Activity, error) {
+	var activity Activity
+	err := dao.Db.Where("id =?", activityId).First(&activity).Error
+	return activity, err
+}
+
 func AddActivity(activityname string) (Activity, error) {
 	activity := Activity{Name: activityname, State: 1}
 	err := dao.Db.Create(&activity).Error
@@ -50,4 +57,10 @@ func GetAllActivityAvailable(sort string) ([]Activity, error) {
 	var activity []Activity
 	err := dao.Db.Where("state =?", 1).Order(sort).Find(&activity).Error
 	return activity, err
+}
+
+// 更新活动状态
+func CloseActivity(activityId int, state int) error {
+	err := dao.Db.Model(&Activity{}).Where("id =?", activityId).Update("state", state).Error
+	return err
 }

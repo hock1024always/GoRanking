@@ -3,6 +3,7 @@ package models
 import (
 	"Ranking/dao"
 	"gorm.io/gorm"
+	"strconv"
 )
 
 type Player struct {
@@ -108,4 +109,64 @@ func GetVoteListForPlayerByActivityId(playerId int, activityId int, sort string)
 	var votes []Vote
 	err := dao.Db.Where("player_id =? AND activity_id =?", playerId, activityId).Order(sort).Find(&votes).Error
 	return votes, err
+}
+
+// 查找多有参赛者 按分数排序
+func GetAllPlayers(sort string) ([]Player, error) {
+	var players []Player
+	err := dao.Db.Order(sort).Find(&players).Error
+	return players, err
+}
+
+// 根据用户删除投票记录
+func DeleteVoteByUserIdAndActivityId(userId, activityId int) ([]int, error) {
+	var votes []Vote
+
+	// 查询符合条件的投票记录
+	err := dao.Db.Where("user_id = ? AND activity_id = ?", userId, activityId).Find(&votes).Error
+	if err != nil {
+		return nil, err // 如果没有找到记录，返回错误
+	}
+
+	// 如果没有找到投票记录，直接返回一个空切片
+	if len(votes) == 0 {
+		return []int{}, nil
+	}
+
+	// 删除符合条件的投票记录
+	result := dao.Db.Where("user_id = ? AND activity_id = ?", userId, activityId).Delete(&Vote{})
+	if result.Error != nil {
+		return nil, result.Error // 返回删除时的错误
+	}
+
+	// 提取所有的 player_id，返回
+	playerIds := make([]int, len(votes))
+	for i, vote := range votes {
+		playerIds[i] = vote.PlayerId
+	}
+
+	return playerIds, nil
+}
+
+func DeleteVoteScore(playerIds []int) error {
+	for _, playerId := range playerIds {
+		err := dao.Db.Model(&Player{}).Where("id =?", playerId).UpdateColumn("score", gorm.Expr("score - ?", 1)).Error
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// IntArrayToStringArray 将整型数组转换为字符串型数组
+func IntArrayToStringArray(intArray []int) []string {
+	// 创建一个字符串型数组，长度与整型数组相同
+	stringArray := make([]string, len(intArray))
+
+	// 遍历整型数组，并将每个元素转换为字符串
+	for i, v := range intArray {
+		stringArray[i] = strconv.Itoa(v) // 使用 strconv.Itoa 将整型转换为字符串
+	}
+
+	return stringArray
 }

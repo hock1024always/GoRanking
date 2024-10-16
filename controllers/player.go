@@ -25,7 +25,7 @@ func (p PlayerController) GetPlayerList(c *gin.Context) {
 
 func (p PlayerController) GetRanking(c *gin.Context) {
 	//获取活动编号
-	aidStr := c.DefaultPostForm("aid", "0")
+	aidStr := c.DefaultPostForm("activity_id", "0")
 	aid, _ := strconv.Atoi(aidStr)
 
 	rs, err := models.GetPlayers(aid, "score desc")
@@ -35,7 +35,6 @@ func (p PlayerController) GetRanking(c *gin.Context) {
 	}
 
 	ReturnSuccess(c, 0, "获取成功", rs, 1)
-	return
 }
 
 func (p PlayerController) PlayerRegister(c *gin.Context) {

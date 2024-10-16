@@ -57,7 +57,8 @@ func Router() *gin.Engine {
 		player.POST("/get_vote_players", controllers.PlayerController{}.GetVoteUsers)
 		//获取某个活动中给自己投票的玩家列表 nickname password activity_id
 		player.POST("/get_vote_players_in_activity", controllers.PlayerController{}.GetVoteUsersInActivity)
-
+		//获取某项活动的排行榜 aid 不合理(获取的是总分)
+		player.POST("/get_activity_ranking", controllers.PlayerController{}.GetRanking)
 	}
 
 	//管理员
@@ -67,16 +68,16 @@ func Router() *gin.Engine {
 		controller.POST("/register", controllers.Controller{}.Register)
 		//添加
 		controller.POST("/activity", controllers.Controller{}.AddActivity)
-		//获取参赛者的总分列表
-		//controller.POST("/ranking", controllers.PlayerController{}.GetAllRanking) //获取排行榜 方便下一步去更改某个player的分数
+		//获取参赛者的总分列表 admin_name password
+		controller.POST("/ranking", controllers.Controller{}.GetAllRanking) //获取排行榜 方便下一步去更改某个player的分数
 		//更新某个player的分数
 		controller.POST("/update_score", controllers.Controller{}.UpdatePlayersScore)
-		////将某个活动关闭
-		//controller.POST("/close_activity", controllers.Controller{}.CloseActivity)
-		////去除某个参赛者在某项活动的得分
-		//controller.POST("/delete_player_score", controllers.Controller{}.DeletePlayerScore)
-		////去除某个用户对于某个活动的投票
-		//controller.POST("/delete_vote", controllers.Controller{}.DeleteVote)
+		//将某个活动关闭 admin_name password activity_id
+		controller.POST("/close_activity", controllers.Controller{}.CloseActivity)
+		//去除某个参赛者在某项活动的得分
+		controller.POST("/delete_player_score", controllers.Controller{}.DeletePlayerScore)
+		//去除某个用户对于某个活动的投票 admin_name password activity_id user_id
+		controller.POST("/delete_vote", controllers.Controller{}.DeleteVote)
 	}
 
 	activity := r.Group("/activity")
