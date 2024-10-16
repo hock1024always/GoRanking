@@ -3,6 +3,7 @@ package models
 import (
 	"Ranking/dao"
 	"gorm.io/gorm"
+	"sort"
 	"strconv"
 )
 
@@ -16,6 +17,12 @@ type Player struct {
 	Declaration string `json:"declaration"` // 将类型改为 string
 	Password    string `json:"password"`
 	// UpdateTime  int    `json:"updateTime"`
+}
+
+// 用来通过便利法得到排名
+type PlayerScore struct {
+	PlayerID int
+	Score    int
 }
 
 func (Player) TableName() string {
@@ -169,4 +176,51 @@ func IntArrayToStringArray(intArray []int) []string {
 	}
 
 	return stringArray
+}
+
+// 输入活动的编号 返回参赛者数组
+func CheckVoteByActivityId(activityId int) ([]int, error) {
+	var votes []Vote
+
+	// 查询符合条件的投票记录
+	err := dao.Db.Where("activity_id = ?", activityId).Find(&votes).Error
+	if err != nil {
+		return nil, err // 如果没有找到记录，返回错误
+	}
+
+	// 如果没有找到投票记录，直接返回一个空切片
+	if len(votes) == 0 {
+		return []int{}, nil
+	}
+
+	// 提取所有的 player_id，返回
+	playerIds := make([]int, len(votes))
+	for i, vote := range votes {
+		playerIds[i] = vote.PlayerId
+	}
+
+	return playerIds, nil
+}
+
+// 根据参赛者编号计算得分
+func GetScoresFromVotes(playerIds []int) []PlayerScore {
+	scoreMap := make(map[int]int)
+
+	// 统计每个参赛者的得分
+	for _, playerId := range playerIds {
+		scoreMap[playerId]++
+	}
+
+	// 将得分数据转换为 PlayerScore 数组
+	playerScores := make([]PlayerScore, 0, len(scoreMap))
+	for playerId, score := range scoreMap {
+		playerScores = append(playerScores, PlayerScore{PlayerID: playerId, Score: score})
+	}
+
+	// 根据得分从高到低排序
+	sort.Slice(playerScores, func(i, j int) bool {
+		return playerScores[i].Score > playerScores[j].Score
+	})
+
+	return playerScores
 }

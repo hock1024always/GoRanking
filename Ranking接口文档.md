@@ -333,9 +333,32 @@ activity := r.Group("/activity")
 
 ```
 
-### 获得某项活动的排行榜（待重构）
+### 获得某项活动的排行榜
 
 想使用借鉴```BTC```的交易型结构，通过遍历数据库vote的条目来得出某项活动中各个参赛者的得分。
+
+```json
+{
+    "code": 0,
+    "data": [
+        {
+            "PlayerID": 1,
+            "Score": 3
+        },
+        {
+            "PlayerID": 4,
+            "Score": 2
+        },
+        {
+            "PlayerID": 2,
+            "Score": 1
+        }
+    ],
+    "msg": "获取成功",
+    "count": 1
+}
+
+```
 
 ## 管理员
 

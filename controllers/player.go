@@ -28,13 +28,21 @@ func (p PlayerController) GetRanking(c *gin.Context) {
 	aidStr := c.DefaultPostForm("activity_id", "0")
 	aid, _ := strconv.Atoi(aidStr)
 
-	rs, err := models.GetPlayers(aid, "score desc")
+	//获取得分列表
+	players, err := models.CheckVoteByActivityId(aid)
 	if err != nil {
-		ReturnError(c, 4131, "获取排名失败")
+		ReturnError(c, 4031, "获取得分列表失败")
+		return
+	}
+	if len(players) == 0 {
+		ReturnError(c, 4032, "没有参赛者参加该活动")
 		return
 	}
 
-	ReturnSuccess(c, 0, "获取成功", rs, 1)
+	//计算排名
+	scores := models.GetScoresFromVotes(players)
+
+	ReturnSuccess(c, 0, "获取成功", scores, 1)
 }
 
 func (p PlayerController) PlayerRegister(c *gin.Context) {
