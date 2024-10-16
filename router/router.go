@@ -45,14 +45,19 @@ func Router() *gin.Engine {
 		player.POST("/register", controllers.PlayerController{}.PlayerRegister)
 		//实现用户选择自己想参与的活动  activity_id username password
 		player.POST("/add_activity", controllers.PlayerController{}.PlayerChooseActivity)
-		//实现添加自己的参赛宣言功能
+		//实现添加自己的参赛宣言功能 declaration nickname password
 		player.POST("/add_declaration", controllers.PlayerController{}.UpdateDeclaration)
-		//GET 获取目前可以参加的活动列表
+		//获取目前可以参加的活动列表 GET
 		player.GET("/get_activitys", controllers.ActivityController{}.GetActivityListForPlayer)
-		////退出正在参与的活动
-		//player.POST("/quit_activity", controllers.PlayerController{}.QuitActivity)
-		////注销参赛者
+		//退出正在参与的活动 nickname password
+		player.POST("/quit_activity", controllers.PlayerController{}.QuitActivity)
+		////注销参赛者 和删除用户逻辑一样，不写了
 		//player.POST("/delete", controllers.PlayerController{}.PlayerDelete)
+		//获取给自己投票的玩家列表 nickname password
+		player.POST("/get_vote_players", controllers.PlayerController{}.GetVoteUsers)
+		//获取某个活动中给自己投票的玩家列表 nickname password activity_id
+		player.POST("/get_vote_players_in_activity", controllers.PlayerController{}.GetVoteUsersInActivity)
+
 	}
 
 	//管理员

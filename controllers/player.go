@@ -149,7 +149,117 @@ func (p PlayerController) UpdateDeclaration(c *gin.Context) {
 	ReturnSuccess(c, 0, "宣言更改成功", "宣言更改为："+player.Declaration, 1)
 }
 
-//参赛者参与活动
+// 参赛者取消参与某项活动
+func (p PlayerController) QuitActivity(c *gin.Context) {
+	//接受用户名 密码
+	nickname := c.DefaultPostForm("nickname", "")
+	password := c.DefaultPostForm("password", "")
 
-//参赛者取消参与某项活动
-//参与者注销账户
+	//验证 用户名或者密码为空 用户名不存在 密码错误
+	if nickname == "" || password == "" {
+		ReturnError(c, 4131, "用户名或密码为空")
+		return
+	}
+	user1, err := models.CheckPlayerExistsByNickname(nickname)
+	if err != nil {
+		ReturnError(c, 4132, "参赛者不存在")
+		return
+	}
+	if user1.Password != password {
+		ReturnError(c, 4133, "密码错误")
+		return
+	}
+
+	//验证aid是否为0
+	if user1.Aid == 0 {
+		ReturnError(c, 4134, "该参赛者并未参与活动，无需删除")
+		return
+	}
+
+	//删除参赛者参与的活动
+	voteNum, err2 := models.DeletePlayerByActivityId(user1.Id, user1.Aid)
+	if err2 != nil {
+		//ReturnError(c, 4135, err2.Error())
+		ReturnError(c, 4135, "删除参赛者参与的活动失败")
+		return
+	}
+	//扣分
+	err3 := models.ReduceScore(user1.Id, voteNum)
+	if err3 != nil {
+		ReturnError(c, 4136, "扣分失败")
+		return
+	}
+	//将aid字段置为0
+	err4 := models.UpdatePlayerAid(user1.Id, 0)
+	if err4 != nil {
+		ReturnError(c, 4137, "更新参赛者参与活动失败")
+		return
+	}
+	ReturnSuccess(c, 0, "退出活动成功", "被扣除积分为："+strconv.Itoa(voteNum), 1)
+}
+
+// 查看给自己投票的用户
+func (p PlayerController) GetVoteUsers(c *gin.Context) {
+	//接受用户名 密码
+	username := c.DefaultPostForm("nickname", "")
+	password := c.DefaultPostForm("password", "")
+
+	//验证 用户名或者密码为空 用户名不存在 密码错误
+	if username == "" || password == "" {
+		ReturnError(c, 4011, "用户名或密码为空")
+		return
+	}
+	user1, err := models.CheckPlayerExistsByNickname(username)
+	if err != nil {
+		ReturnError(c, 4012, "用户名不存在")
+		return
+	}
+	if user1.Password != password {
+		ReturnError(c, 4013, "密码错误")
+		return
+	}
+
+	//获取投票列表
+	voteList, err2 := models.GetVoteListForPlayer(user1.Id, "id desc")
+	if err2 != nil {
+		ReturnError(c, 4014, "获取投票列表失败")
+		return
+	}
+	ReturnSuccess(c, 0, "获取投票列表成功", voteList, 1)
+}
+
+// 查看某个活动中给自己投票的用户
+func (p PlayerController) GetVoteUsersInActivity(c *gin.Context) {
+	//接受用户名 密码
+	username := c.DefaultPostForm("nickname", "")
+	password := c.DefaultPostForm("password", "")
+	activityIdStr := c.DefaultPostForm("activity_id", "0")
+	activityId, _ := strconv.Atoi(activityIdStr)
+
+	//验证 用户名或者密码为空 用户名不存在 密码错误
+	if username == "" || password == "" {
+		ReturnError(c, 4011, "用户名或密码为空")
+		return
+	}
+	user1, err := models.CheckPlayerExistsByNickname(username)
+	if err != nil {
+		ReturnError(c, 4012, "用户名不存在")
+		return
+	}
+	if user1.Password != password {
+		ReturnError(c, 4013, "密码错误")
+		return
+	}
+	if activityId == 0 {
+		ReturnError(c, 4015, "活动不存在")
+		return
+	}
+
+	//获取投票列表
+	voteList, err2 := models.GetVoteListForPlayerByActivityId(user1.Id, activityId, "id desc")
+	if err2 != nil {
+		ReturnError(c, 4014, "获取投票列表失败")
+		return
+	}
+	ReturnSuccess(c, 0, "获取投票列表成功", voteList, 1)
+}

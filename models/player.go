@@ -73,3 +73,39 @@ func AddDeclaration(id int, declaration string) (Player, error) {
 	err := dao.Db.Model(&player).Where("id =?", id).Update("declaration", declaration).Error
 	return player, err
 }
+
+// 删除涉及玩家和活动的投票记录 并返回得分
+func DeletePlayerByActivityId(playerId, activityId int) (int, error) {
+	// 定义一个变量来存储删除的记录数量
+	result := dao.Db.Where("player_id = ? AND activity_id = ?", playerId, activityId).Delete(&Vote{})
+	var voteNum int = int(result.RowsAffected)
+	// 返回删除的条目数量和可能发生的错误
+	return voteNum, result.Error
+}
+
+// 通过删除记录来扣分
+func ReduceScore(playerId int, voteNum int) error {
+	var player Player
+	err := dao.Db.Model(&player).Where("id =?", playerId).UpdateColumn("score", gorm.Expr("score - ?", voteNum)).Error
+	return err
+}
+
+func UpdatePlayerAid(id int, aid int) error {
+	var player Player
+	err := dao.Db.Model(&player).Where("id =?", id).Update("aid", aid).Error
+	return err
+}
+
+// 查看给这个参赛者投票的投票记录
+func GetVoteListForPlayer(playerId int, sort string) ([]Vote, error) {
+	var votes []Vote
+	err := dao.Db.Where("player_id =?", playerId).Order(sort).Find(&votes).Error
+	return votes, err
+}
+
+// 查看给这个活动投票给某个用户的投票记录
+func GetVoteListForPlayerByActivityId(playerId int, activityId int, sort string) ([]Vote, error) {
+	var votes []Vote
+	err := dao.Db.Where("player_id =? AND activity_id =?", playerId, activityId).Order(sort).Find(&votes).Error
+	return votes, err
+}
