@@ -164,6 +164,10 @@ func (u UserController) ModifyPassword(c *gin.Context) {
 		ReturnError(c, 4013, "密码错误")
 		return
 	}
+	if newPassword == "" || confirmNewPassword == "" {
+		ReturnError(c, 4016, "新密码或确认新密码为空")
+		return
+	}
 	if newPassword != confirmNewPassword {
 		ReturnError(c, 4015, "新密码与确认新密码不一致")
 		return

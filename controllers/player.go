@@ -10,7 +10,7 @@ type PlayerController struct{}
 
 func (p PlayerController) GetPlayerList(c *gin.Context) {
 	//获取参赛者列表
-	aidStr := c.DefaultPostForm("aid", "0")
+	aidStr := c.DefaultPostForm("activity_id", "0")
 	aid, _ := strconv.Atoi(aidStr)
 
 	rs, err := models.GetPlayers(aid, "id asc")
@@ -117,6 +117,7 @@ func (p PlayerController) UpdateDeclaration(c *gin.Context) {
 	//接受用户名 密码
 	nickname := c.DefaultPostForm("nickname", "")
 	password := c.DefaultPostForm("password", "")
+	declaration := c.DefaultPostForm("declaration", "0")
 
 	//验证 用户名或者密码为空 用户名不存在 密码错误
 	if nickname == "" || password == "" {
@@ -134,7 +135,7 @@ func (p PlayerController) UpdateDeclaration(c *gin.Context) {
 	}
 
 	//接受活动名称 要验证宣言字符串是否为空
-	declaration := c.DefaultPostForm("declaration", "0")
+
 	if declaration == "" {
 		ReturnError(c, 4136, "宣言不能为空")
 		return

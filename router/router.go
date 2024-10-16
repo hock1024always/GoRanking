@@ -43,7 +43,7 @@ func Router() *gin.Engine {
 	{
 		//注册参赛者相关的路由 nickname password confirm_password
 		player.POST("/register", controllers.PlayerController{}.PlayerRegister)
-		//实现用户选择自己想参与的活动  activity_id username password
+		//实现用户选择自己想参与的活动  activity_id nickname password
 		player.POST("/add_activity", controllers.PlayerController{}.PlayerChooseActivity)
 		//实现添加自己的参赛宣言功能 declaration nickname password
 		player.POST("/add_declaration", controllers.PlayerController{}.UpdateDeclaration)
@@ -57,24 +57,24 @@ func Router() *gin.Engine {
 		player.POST("/get_vote_players", controllers.PlayerController{}.GetVoteUsers)
 		//获取某个活动中给自己投票的玩家列表 nickname password activity_id
 		player.POST("/get_vote_players_in_activity", controllers.PlayerController{}.GetVoteUsersInActivity)
-		//获取某项活动的排行榜 aid 不合理(获取的是总分)
+		//获取某项活动的排行榜 activity_id 不合理(获取的是总分)
 		player.POST("/get_activity_ranking", controllers.PlayerController{}.GetRanking)
 	}
 
 	//管理员
 	controller := r.Group("/admin")
 	{
-		//注册管理员相关的路由 username password confirm_password key
+		//注册管理员相关的路由 admin_name password confirm_password key
 		controller.POST("/register", controllers.Controller{}.Register)
-		//添加
+		//添加 admin_name password activity_name
 		controller.POST("/activity", controllers.Controller{}.AddActivity)
 		//获取参赛者的总分列表 admin_name password
 		controller.POST("/ranking", controllers.Controller{}.GetAllRanking) //获取排行榜 方便下一步去更改某个player的分数
-		//更新某个player的分数
+		//更新某个player的分数 player_name admin_name password update_score
 		controller.POST("/update_score", controllers.Controller{}.UpdatePlayersScore)
 		//将某个活动关闭 admin_name password activity_id
 		controller.POST("/close_activity", controllers.Controller{}.CloseActivity)
-		//去除某个参赛者在某项活动的得分
+		//去除某个参赛者在某项活动的得分 admin_name password activity_id player_id
 		controller.POST("/delete_player_score", controllers.Controller{}.DeletePlayerScore)
 		//去除某个用户对于某个活动的投票 admin_name password activity_id user_id
 		controller.POST("/delete_vote", controllers.Controller{}.DeleteVote)
@@ -82,12 +82,10 @@ func Router() *gin.Engine {
 
 	activity := r.Group("/activity")
 	{
-		//获取所有活动列表
+		//获取所有活动列表 GET
 		activity.GET("/list", controllers.ActivityController{}.GetActivityList)
-		//获取参与某项活动的参赛者列表 aid
-		player.POST("/player_list", controllers.PlayerController{}.GetPlayerList)
-		//获取某项活动的排行榜 aid
-		r.POST("/ranking", controllers.PlayerController{}.GetRanking)
+		//获取参与某项活动的参赛者列表 activity_id
+		activity.POST("/player_list", controllers.PlayerController{}.GetPlayerList)
 	}
 	return r
 }
